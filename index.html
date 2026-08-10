@@ -1,6 +1,3 @@
-Exit code: 0
-Wall time: 0.9 seconds
-Output:
 <!doctype html>
 <html lang="es">
   <head>
@@ -37,13 +34,13 @@ Output:
   </head>
   <body>
     <main class="game">
-      <header><h1>Neon Salvage</h1><div class="stats"><div class="badge">ðŸ’° <span id="money">0</span></div><div class="badge">âš¡ Nivel <span id="level">1</span></div><div class="badge">â¤ï¸ <span id="health">5</span></div></div></header>
-      <section class="stage"><canvas id="canvas" width="960" height="540"></canvas><div id="start"><div class="card"><h2>Â¡A disparar!</h2><p>Destruye los drones, recoge su energÃ­a y mejora tu nave. Apunta y dispara con el ratÃ³n, el dedo o las teclas <b>Espacio</b> / <b>Enter</b>.</p><button id="startButton">COMENZAR MISIÃ“N</button></div></div></section>
+      <header><h1>Neon Salvage</h1><div class="stats"><div class="badge"> <span id="money">0</span></div><div class="badge"> Nivel <span id="level">1</span></div><div class="badge"> <span id="health">5</span></div></div></header>
+      <section class="stage"><canvas id="canvas" width="960" height="540"></canvas><div id="start"><div class="card"><h2>A disparar!</h2><p>Destruye los drones, recoge su energa y mejora tu nave. Apunta y dispara con el ratn, el dedo o las teclas <b>Espacio</b> / <b>Enter</b>.</p><button id="startButton">COMENZAR MISIN</button></div></div></section>
       <section class="shop" aria-label="Tienda de mejoras">
-        <button class="upgrade" data-upgrade="damage"><strong>ðŸ”« Potencia</strong><small>MÃ¡s daÃ±o por disparo</small><span class="cost">$<span>25</span></span></button>
-        <button class="upgrade" data-upgrade="speed"><strong>âš¡ Cadencia</strong><small>Dispara mÃ¡s rÃ¡pido</small><span class="cost">$<span>35</span></span></button>
-        <button class="upgrade" data-upgrade="repair"><strong>ðŸ›¡ï¸ Reparar nave</strong><small>Recupera 1 corazÃ³n</small><span class="cost">$<span>20</span></span></button>
-      </section><footer>Los drones blindados dan mÃ¡s dinero. Cada nivel aumenta el desafÃ­o.</footer>
+        <button class="upgrade" data-upgrade="damage"><strong> Potencia</strong><small>Ms dao por disparo</small><span class="cost">$<span>25</span></span></button>
+        <button class="upgrade" data-upgrade="speed"><strong> Cadencia</strong><small>Dispara ms rpido</small><span class="cost">$<span>35</span></span></button>
+        <button class="upgrade" data-upgrade="repair"><strong> Reparar nave</strong><small>Recupera 1 corazn</small><span class="cost">$<span>20</span></span></button>
+      </section><footer>Los drones blindados dan ms dinero. Cada nivel aumenta el desafo.</footer>
     </main>
     <script>
       const canvas=document.querySelector('#canvas'), ctx=canvas.getContext('2d');
@@ -55,7 +52,7 @@ Output:
       function updateUI(){ui.money.textContent=game.money;ui.level.textContent=game.level;ui.health.textContent=game.health; document.querySelectorAll('.upgrade').forEach(b=>{const k=b.dataset.upgrade; b.querySelector('.cost span').textContent=costs[k]; b.disabled=game.money<costs[k]||(k==='repair'&&game.health>=5);});}
       function spawn(){let armor=1+Math.floor(Math.random()*Math.min(4,game.level/2));let r=16+armor*4; game.enemies.push({x:30+Math.random()*(W-60),y:-r,r,hp:armor*2,armor,vy:.35+Math.random()*.55+game.level*.045,wobble:Math.random()*6.28});}
       function shoot(){let now=performance.now(); if(!game.running||now-game.lastShot<game.fireDelay)return; game.lastShot=now; let sx=W/2,sy=H-48,a=Math.atan2(mouse.y-sy,mouse.x-sx); game.bullets.push({x:sx,y:sy,vx:Math.cos(a)*10,vy:Math.sin(a)*10});}
-      function end(){game.running=false;ui.start.innerHTML='<div class="card"><h2>MisiÃ³n finalizada</h2><p>Conseguiste $'+game.money+' y alcanzaste el nivel '+game.level+'.</p><button id="startButton">JUGAR DE NUEVO</button></div>';ui.start.classList.remove('hidden');document.querySelector('#startButton').onclick=reset;}
+      function end(){game.running=false;ui.start.innerHTML='<div class="card"><h2>Misin finalizada</h2><p>Conseguiste $'+game.money+' y alcanzaste el nivel '+game.level+'.</p><button id="startButton">JUGAR DE NUEVO</button></div>';ui.start.classList.remove('hidden');document.querySelector('#startButton').onclick=reset;}
       function reset(){Object.assign(game,{running:true,money:0,level:1,health:5,damage:1,fireDelay:290,enemies:[],bullets:[],spawnTimer:0});ui.start.classList.add('hidden');updateUI();}
       function drawShip(){let x=W/2,y=H-45;ctx.save();ctx.translate(x,y);ctx.fillStyle='#36e9ff';ctx.shadowBlur=22;ctx.shadowColor='#36e9ff';ctx.beginPath();ctx.moveTo(0,-22);ctx.lineTo(16,18);ctx.lineTo(0,11);ctx.lineTo(-16,18);ctx.closePath();ctx.fill();ctx.restore();}
       function loop(t){requestAnimationFrame(loop);ctx.clearRect(0,0,W,H);ctx.fillStyle='#8ca5d7';game.stars.forEach(s=>{s.y+=s.s;if(s.y>H)s.y=0;ctx.globalAlpha=.4+s.r/3;ctx.fillRect(s.x,s.y,s.r,s.r)});ctx.globalAlpha=1;if(game.running){game.spawnTimer+=1;let interval=Math.max(32,105-game.level*4);if(game.spawnTimer>interval){spawn();game.spawnTimer=0} game.enemies.forEach(e=>{e.y+=e.vy;e.x+=Math.sin(t/500+e.wobble)*.7; if(e.y>H+e.r){e.dead=true;game.health--;if(game.health<=0)end()} });game.bullets.forEach(b=>{b.x+=b.vx;b.y+=b.vy;if(b.x<0||b.x>W||b.y<0||b.y>H)b.dead=true;game.enemies.forEach(e=>{if(!e.dead&&Math.hypot(b.x-e.x,b.y-e.y)<e.r){b.dead=true;e.hp-=game.damage;if(e.hp<=0){e.dead=true;game.money+=e.armor*8; if(game.money>game.level*80)game.level++;updateUI()}}})});game.enemies=game.enemies.filter(e=>!e.dead);game.bullets=game.bullets.filter(b=>!b.dead)}game.enemies.forEach(e=>{ctx.fillStyle=e.armor>2?'#ff4f9a':'#ff9c43';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=16;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#1b1838';ctx.fillRect(e.x-e.r*.55,e.y-3,e.r*1.1,6);ctx.fillStyle='#fff';ctx.fillRect(e.x-e.r*.55,e.y-3,e.r*1.1*(e.hp/(e.armor*2)),6)});ctx.fillStyle='#efffff';ctx.shadowColor='#36e9ff';ctx.shadowBlur=15;game.bullets.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,4,0,7);ctx.fill()});ctx.shadowBlur=0;drawShip();}
